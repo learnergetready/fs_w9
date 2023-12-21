@@ -22,7 +22,7 @@ interface ParsedArguments {
 }
 
 const parseArguments = (args: string[]): ParsedArguments => {
-  if (args.length < 2) throw new Error("Not enough arguments");
+  if (args.length < 4) throw new Error("Not enough arguments");
   const [reject1, reject2, target, ...excercises] = args;
 
   if (isNumber(target) && excercises.every((arg) => isNumber(arg))) {
