@@ -1,3 +1,5 @@
+import { isNumber } from "./utils";
+
 type rating = 1 | 2 | 3;
 type ratingDescription =
   | "bad"
@@ -13,6 +15,25 @@ interface Result {
   target: number;
   average: number;
 }
+
+interface ParsedArguments {
+  target: number;
+  exercises: number[];
+}
+
+const parseArguments = (args: string[]): ParsedArguments => {
+  if (args.length < 2) throw new Error("Not enough arguments");
+  const [reject1, reject2, target, ...excercises] = args;
+
+  if (isNumber(target) && excercises.every((arg) => isNumber(arg))) {
+    return {
+      target: Number(target),
+      exercises: excercises.map((arg) => Number(arg)),
+    };
+  } else {
+    throw new Error("Provided values were not numbers!");
+  }
+};
 
 const calculateExcercises = (excercises: number[], target: number): Result => {
   const sumReducer = (acc: number, current: number): number => acc + current;
@@ -51,4 +72,13 @@ const calculateExcercises = (excercises: number[], target: number): Result => {
   };
 };
 
-console.log(calculateExcercises([3, 0, 2, 4.5, 0, 3, 1], 2));
+try {
+  const { target, exercises } = parseArguments(process.argv);
+  console.log(calculateExcercises(exercises, target));
+} catch (error: unknown) {
+  let errorMessage = "Something bad happened.";
+  if (error instanceof Error) {
+    errorMessage += " Error: " + error.message;
+  }
+  console.log(errorMessage);
+}
