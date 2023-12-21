@@ -82,3 +82,5 @@ try {
   }
   console.log(errorMessage);
 }
+
+export default { parseArguments, calculateExcercises };
