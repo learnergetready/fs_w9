@@ -21,6 +21,11 @@ interface ParsedArguments {
   exercises: number[];
 }
 
+interface unParsedArguments {
+  target: any;
+  daily_exercises: any[];
+}
+
 const parseArguments = (args: string[]): ParsedArguments => {
   if (args.length < 4) throw new Error("Not enough arguments");
   const [_reject1, _reject2, target, ...excercises] = args;
@@ -35,7 +40,27 @@ const parseArguments = (args: string[]): ParsedArguments => {
   }
 };
 
-const calculateExcercises = (excercises: number[], target: number): Result => {
+export const parseJSONarguments = ({
+  daily_exercises,
+  target,
+}: unParsedArguments): ParsedArguments => {
+  if (!daily_exercises || !target) {
+    throw new Error("parameters missing");
+  }
+  if (daily_exercises.every((arg) => String(arg)) && String(target)) {
+    return parseArguments(
+      ["a", "b", String(target)].concat(
+        daily_exercises.map((arg) => String(arg))
+      )
+    );
+  }
+  throw new Error("Was not able to parse arguments.");
+};
+
+export const calculateExcercises = (
+  excercises: number[],
+  target: number
+): Result => {
   const sumReducer = (acc: number, current: number): number => acc + current;
   const rate = (average: number, target: number): rating => {
     if (average / target < 0.4) return 1;
@@ -82,5 +107,3 @@ try {
   }
   console.log(errorMessage);
 }
-
-export default { parseArguments, calculateExcercises };
