@@ -23,7 +23,7 @@ interface ParsedArguments {
 
 const parseArguments = (args: string[]): ParsedArguments => {
   if (args.length < 4) throw new Error("Not enough arguments");
-  const [reject1, reject2, target, ...excercises] = args;
+  const [_reject1, _reject2, target, ...excercises] = args;
 
   if (isNumber(target) && excercises.every((arg) => isNumber(arg))) {
     return {
@@ -51,7 +51,7 @@ const calculateExcercises = (excercises: number[], target: number): Result => {
       case 3:
         return "excellent";
       default:
-        return "bad";
+        throw new Error("Cannot describe that rating.");
     }
   };
   const periodLength = excercises.length;
