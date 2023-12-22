@@ -1,0 +1,3 @@
+[submodule "pati-client"]
+	path = pati-client
+	url = git@github.com:learnergetready/pati-client.git
