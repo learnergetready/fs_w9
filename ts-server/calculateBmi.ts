@@ -19,7 +19,7 @@ const parseArguments = (args: string[]): HeightWeight => {
   }
 };
 
-export const parseQueryString = (height: any, weight: any): HeightWeight => {
+export const parseQueryString = (height: unknown, weight: unknown): HeightWeight => {
   if (String(height) && String(weight)) {
     return parseArguments(["a", "b", String(height), String(weight)]);
   }
@@ -37,14 +37,15 @@ export const calculateBmi = (height: number, weight: number): string => {
   if (bmi < 40.0) return "Obese (Class II)";
   return "Obese (Class III)";
 };
-
-try {
-  const { height, weight } = parseArguments(process.argv);
-  console.log(calculateBmi(height, weight));
-} catch (error: unknown) {
-  let errorMessage = "Something bad happened.";
-  if (error instanceof Error) {
-    errorMessage += " Error: " + error.message;
+if (require.main === module) {
+  try {
+    const { height, weight } = parseArguments(process.argv);
+    console.log(calculateBmi(height, weight));
+  } catch (error: unknown) {
+    let errorMessage = "Something bad happened.";
+    if (error instanceof Error) {
+      errorMessage += " Error: " + error.message;
+    }
+    console.log(errorMessage);
   }
-  console.log(errorMessage);
 }
