@@ -1,3 +1,6 @@
 [submodule "pati-client"]
 	path = pati-client
 	url = git@github.com:learnergetready/pati-client.git
+[submodule "ilaris-back"]
+	path = ilaris-back
+	url = git@github.com:fullstack-hy2020/flight-diary.git
