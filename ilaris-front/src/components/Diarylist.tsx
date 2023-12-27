@@ -9,7 +9,7 @@ import { Diary } from '../types';
 
 const Diarylist = ({diaries}: {diaries:Diary[]}) => {
     return (<TableContainer component={Paper}>
-    <Table sx={{ minWidth: 350 }} aria-label="simple table">
+    <Table sx={{ minWidth: 350 }} size='small' aria-label="a dense table">
       <TableHead>
         <TableRow>
           <TableCell>Date</TableCell>
