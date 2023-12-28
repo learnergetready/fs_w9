@@ -9,6 +9,15 @@ router.get("/", (_req, res) => {
     res.send(patienService.safeGetPatients());
 });
 
+router.get("/:id", (req, res) => {
+    const patient = patienService.findPatient(req.params.id);
+    if (patient) {
+        res.send(patient);
+    } else {
+        res.status(400).send("Error: no patient with that id.");
+    }
+});
+
 router.post("/", (req, res) => {
     try {
         const newPatient: NewPatient = toNewPatient(req.body);
