@@ -1,35 +1,52 @@
 import { LibraryBooks, CalendarToday } from "@mui/icons-material";
-import { Box, Button, FormControl, FormControlLabel, FormLabel, Input, InputAdornment, Radio, RadioGroup, TextField } from "@mui/material";
+import { Box, Button, FormControl, FormControlLabel, FormLabel, Input, InputAdornment, Radio, RadioGroup, TextField, Typography } from "@mui/material";
 import { Diary, NewDiaryEntry, Visibility, Weather } from "../types";
 import diaryService from "../services/diaryService";
+import Notification from "./Notification";
+import { useState } from "react";
 
-type typeAddDiary = (diary: Diary) => void
+interface Props {
+  addDiary: (diary: Diary) => void;
+}
 
-const Diaryform = ({addDiary}: {addDiary: typeAddDiary}) => {
+const Diaryform = ({addDiary}: Props) => {
+  const [notification, setNotification] = useState<string>("");
 
+  const notify = (message: string): void => {
+    setNotification(message);
+    setTimeout(() => {
+      setNotification("");
+    }, 6000);
+  };
     const handleSubmit = (event: React.SyntheticEvent) => {
-        event.preventDefault()
+        event.preventDefault();
         const target = event.target as typeof event.target & {
             date: {value: string};
             visibility: {value: string};
             weather: {value: string};
             comment: {value: string};
-        }
+        };
         const newEntry: NewDiaryEntry = {
             date: target.date.value,
             visibility: target.visibility.value as Visibility,
             weather: target.weather.value as Weather,
             comment: target.comment.value,
-        }
-        diaryService.post(newEntry).then(diary => addDiary(diary))
-        target.date.value = "";
-        target.visibility.value = "";
-        target.weather.value = "";
-        target.comment.value = "";
-    }
-
+        };
+        diaryService
+          .post(newEntry, notify)
+          .then(diary => {
+            if (typeof diary !== "undefined" && diary !== "error") {
+              addDiary(diary);
+              target.date.value = "";
+              target.visibility.value = "";
+              target.weather.value = "";
+              target.comment.value = "";
+        }});
+    };
     return(
       <Box>
+        <Typography marginTop={5} variant="h5" component="h2">Add a new entry</Typography>
+        <Notification message={notification}/>
         <form  onSubmit={handleSubmit}>
         <FormControl>
             <FormLabel>Date</FormLabel>
