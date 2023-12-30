@@ -4,7 +4,12 @@ import diagnoseRouter from "./routers/diagnoses";
 import patientRouter from "./routers/patients";
 
 const app = express();
-app.use(cors());
+//dev cors options
+const corsOptions = {
+  origin: "http://localhost:5173",
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 const PORT = 3001;
