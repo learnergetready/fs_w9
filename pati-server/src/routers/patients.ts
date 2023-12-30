@@ -1,7 +1,7 @@
 import express from "express";
 import patienService from "../services/patientService";
 import { NewPatient } from "../types";
-import { toNewPatient } from "../utils";
+import { toNewEntry, toNewPatient } from "../utils";
 
 const router = express.Router();
 
@@ -29,6 +29,21 @@ router.post("/", (req, res) => {
             errorMessage += " Error: " + error.message;
         }
         res.status(400).send(errorMessage);
+    }
+});
+
+router.post("/:id/entries", (req, res) => {
+    const patient = patienService.findPatient(req.params.id);
+    if (!patient) {
+        res.status(400).send("Error: no patient with that id.");
+    } else {
+        const newEntry = toNewEntry(req.body);
+        if (!newEntry) {
+            res.status(400).send("Error: malformed entry.");
+        } else {
+            const entry = patienService.addEntry(patient, newEntry);
+            res.send(entry);
+        }
     }
 });
 
