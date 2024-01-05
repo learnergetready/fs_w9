@@ -16,16 +16,16 @@ const isGender = (something: string): something is Gender => {
     return Object.values(Gender).map(g => g.toString()).includes(something);
 };
 
-const parseString = (something: unknown): string => {
+const parseString = (something: unknown, dataType: string = "data"): string => {
     if (!something || !isString(something)) {
-        throw new Error("Incorrect or missing data");
+        throw new Error("Incorrect or missing " + dataType);
     }
     return something;
 };
 
-const parseDOB = (something: unknown): string => {
+const parseDate = (something: unknown, dataType: string = "date"): string => {
     if (!something || !isString(something) || !isDate(something)) {
-        throw new Error("Incorrect or missing DOB");
+        throw new Error("Incorrect or missing " + dataType);
     }
     return something;
 };
@@ -44,7 +44,7 @@ export const toNewPatient = (obj: unknown): NewPatient => {
     if ("name" in obj && "dateOfBirth" in obj && "ssn" in obj && "gender" in obj && "occupation" in obj) {
         const newPatient: NewPatient = {
             name: parseString(obj.name),
-            dateOfBirth: parseDOB(obj.dateOfBirth),
+            dateOfBirth: parseDate(obj.dateOfBirth, "DOB"),
             ssn: parseString(obj.ssn),
             gender: parseGender(obj.gender),
             occupation: parseString(obj.occupation),
@@ -56,13 +56,6 @@ export const toNewPatient = (obj: unknown): NewPatient => {
 };
 
 // Entry parser
-const parseDate = (something: unknown): string => {
-    if (!something || !isString(something) || !isDate(something)) {
-        throw new Error("Incorrect or missing date");
-    }
-    return something;
-};
-
 const isNumber = (something: unknown): something is number => {
     return typeof something === "number" || something instanceof Number;
 };
@@ -72,25 +65,25 @@ const isHealthCheckRating = (something: number): something is HealthCheckRating 
 };
 
 const parseHealthCheckRating = (something: unknown): HealthCheckRating => {
-    if (!something || !isNumber(something) || !isHealthCheckRating(something)) {
-        throw new Error("Incorrect or missing gender");
+    if (!isNumber(something) || !isHealthCheckRating(something)) {
+        throw new Error("Incorrect or missing health check rating.");
     }
     return something;
 };
 
 const parseDischarge = (object: unknown): Discharge => {
     if (!object || typeof object !== 'object' || !('date' in object) || !("criteria" in object)) {
-        throw new Error("Incorrect or missing discharge.");
+        throw new Error("Incorrect or missing discharge information.");
     }
     if (typeof object.date !== "string" || typeof object.criteria !== "string") {
-        throw new Error("Incorrect or missing discharge.");
+        throw new Error("Incorrect or missing discharge information.");
     }
     return object as Discharge;
 };
 
 const parseSickLeave = (object: unknown): SickLeave => {
     if (!object || typeof object !== 'object' || !('startDate' in object) || !("endDate" in object)) {
-        throw new Error("Incorrect or missing discharge.");
+        throw new Error("Incorrect or missing sick leave information.");
     }
     const parsedSickleave: SickLeave = {
         startDate: parseDate(object.startDate),
@@ -114,7 +107,7 @@ export const toNewEntry = (obj: unknown): NewEntry => {
     }
 
     if (!("type" in obj) || typeof obj.type !== "string" || !("date" in obj) || !("specialist" in obj) || !("description" in obj)) {
-        throw new Error("Incorrect or missing data");
+        throw new Error("Incorrect or missing fields");
     }
 
     switch (obj.type) {
@@ -122,8 +115,8 @@ export const toNewEntry = (obj: unknown): NewEntry => {
             if ("healthCheckRating" in obj) {
                 const newEntry: NewEntry = {
                     date: parseDate(obj.date),
-                    specialist: parseString(obj.specialist),
-                    description: parseString(obj.description),
+                    specialist: parseString(obj.specialist, "specialist"),
+                    description: parseString(obj.description, "description"),
                     healthCheckRating: parseHealthCheckRating(obj.healthCheckRating),
                     type: obj.type,
                 };
@@ -137,8 +130,8 @@ export const toNewEntry = (obj: unknown): NewEntry => {
             if ("discharge" in obj) {
                 const newEntry: NewEntry = {
                     date: parseDate(obj.date),
-                    specialist: parseString(obj.specialist),
-                    description: parseString(obj.description),
+                    specialist: parseString(obj.specialist, "specialist"),
+                    description: parseString(obj.description, "description"),
                     discharge: parseDischarge(obj.discharge),
                     type: obj.type,
                 };
@@ -152,9 +145,9 @@ export const toNewEntry = (obj: unknown): NewEntry => {
             if ("employerName" in obj) {
                 const newEntry: NewEntry = {
                     date: parseDate(obj.date),
-                    specialist: parseString(obj.specialist),
-                    description: parseString(obj.description),
-                    employerName: parseString(obj.employerName),
+                    specialist: parseString(obj.specialist, "specialist"),
+                    description: parseString(obj.description, "description"),
+                    employerName: parseString(obj.employerName, "employer name"),
                     type: obj.type,
                 };
                 if ("sickLeave" in obj) {

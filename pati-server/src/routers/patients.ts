@@ -37,12 +37,16 @@ router.post("/:id/entries", (req, res) => {
     if (!patient) {
         res.status(400).send("Error: no patient with that id.");
     } else {
-        const newEntry = toNewEntry(req.body);
-        if (!newEntry) {
-            res.status(400).send("Error: malformed entry.");
-        } else {
+        try {
+            const newEntry = toNewEntry(req.body);
             const entry = patienService.addEntry(patient, newEntry);
             res.send(entry);
+        } catch (error) {
+            if (error instanceof Error) {
+                console.log(error);
+
+                res.status(400).send("Entry couldn't be added: " + error.message);
+            }
         }
     }
 });
