@@ -75,10 +75,11 @@ const parseDischarge = (object: unknown): Discharge => {
     if (!object || typeof object !== 'object' || !('date' in object) || !("criteria" in object)) {
         throw new Error("Incorrect or missing discharge information.");
     }
-    if (typeof object.date !== "string" || typeof object.criteria !== "string") {
-        throw new Error("Incorrect or missing discharge information.");
-    }
-    return object as Discharge;
+    const parsedDischarge: Discharge = {
+        criteria: parseString(object.criteria, "Discharge criteria"),
+        date: parseDate(object.date, "Discharge date")
+    };
+    return parsedDischarge;
 };
 
 const parseSickLeave = (object: unknown): SickLeave => {
